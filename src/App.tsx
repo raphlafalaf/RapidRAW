@@ -1,7 +1,7 @@
 import { type PointerEvent as ReactPointerEvent, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { listen } from '@tauri-apps/api/event';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { listen, type Event } from '@tauri-apps/api/event';
+import { getCurrentWindow, type DragDropEvent } from '@tauri-apps/api/window';
 import { ClerkProvider } from '@clerk/react';
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import clsx from 'clsx';
@@ -38,6 +38,7 @@ import { useLibraryActions } from './hooks/useLibraryActions';
 import { useProductivityActions } from './hooks/useProductivityActions';
 
 import { useAppInitialization } from './hooks/useAppInitialization';
+import { isSupportedImagePath } from './utils/fileUtils';
 import './i18n';
 
 import {
@@ -522,6 +523,30 @@ function App() {
       unlistenPromise.then((unlisten: any) => unlisten());
     };
   }, [setUI]);
+
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+
+    getCurrentWindow()
+      .onDragDropEvent((event: Event<DragDropEvent>) => {
+        if (event.payload.type !== 'drop') return;
+
+        const { supportedTypes } = useSettingsStore.getState();
+        const paths: string[] = event.payload.paths || [];
+        const firstSupported = paths.find((path) => isSupportedImagePath(path, supportedTypes));
+
+        if (firstSupported) {
+          handleImageSelect(firstSupported);
+        }
+      })
+      .then((fn) => {
+        unlisten = fn;
+      });
+
+    return () => {
+      unlisten?.();
+    };
+  }, [handleImageSelect]);
 
   const handleRightPanelSelect = useCallback(
     (panelId: Panel) => {
