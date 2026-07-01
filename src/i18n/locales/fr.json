@@ -966,6 +966,7 @@
       "latestVersion": "Vous utilisez la dernière version",
       "newVersionAvailable": "Nouvelle version disponible !",
       "openFolder": "Ouvrir un dossier",
+      "openImage": "Ouvrir une image",
       "openLibrary": "Ouvrir la bibliothèque",
       "or": "ou",
       "version": "Version {{version}}",

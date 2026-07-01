@@ -7,6 +7,7 @@ import {
   Folder,
   FolderInput,
   Home,
+  ImagePlus,
   Loader2,
   RefreshCw,
   Settings,
@@ -62,6 +63,7 @@ interface MainLibraryProps {
   onImportClick(): void;
   onLibraryRefresh(): void;
   onOpenFolder(): void;
+  onOpenImage(): void;
   onSettingsChange(settings: AppSettings): Promise<void>;
   onThumbnailAspectRatioChange(aspectRatio: ThumbnailAspectRatio): void;
   onThumbnailSizeChange(size: ThumbnailSize): void;
@@ -318,6 +320,16 @@ export default function MainLibrary(props: MainLibraryProps) {
                               ? t('library.splash.addFolder')
                               : t('library.splash.openFolder')}
                         </Button>
+                        {!props.isAndroid && (
+                          <Button
+                            className="rounded-md grow flex justify-center items-center shadow-md h-11 bg-surface text-text-primary"
+                            onClick={props.onOpenImage}
+                            size="lg"
+                          >
+                            <ImagePlus size={20} className="mr-2" />
+                            {t('library.splash.openImage')}
+                          </Button>
+                        )}
                         <Button
                           className="px-3 bg-surface text-text-primary shadow-md h-11"
                           onClick={() => setShowSettings(true)}

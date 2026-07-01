@@ -264,6 +264,7 @@ function App() {
     handleSelectSubfolder,
     handleSelectAlbum,
     handleOpenFolder,
+    handleOpenImage,
     handleContinueSession,
   } = useAppNavigation({
     clearThumbnailQueue,
@@ -680,6 +681,7 @@ function App() {
                   handleContinueSession={handleContinueSession}
                   handleGoHome={handleGoHome}
                   handleOpenFolder={handleOpenFolder}
+                  handleOpenImage={handleOpenImage}
                   handleImportClick={handleImportClick}
                   handleLibraryRefresh={handleLibraryRefresh}
                   handleCopyAdjustments={handleCopyAdjustments}

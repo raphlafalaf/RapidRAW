@@ -965,6 +965,7 @@
       "latestVersion": "У вас установлена последняя версия",
       "newVersionAvailable": "Доступна новая версия!",
       "openFolder": "Открыть папку",
+      "openImage": "Открыть изображение",
       "openLibrary": "Открыть библиотеку",
       "or": "или",
       "version": "Версия {{version}}",
