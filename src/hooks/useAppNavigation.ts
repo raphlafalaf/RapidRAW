@@ -57,7 +57,7 @@ export function useAppNavigation({ clearThumbnailQueue, refs }: AppNavigationPro
     useUIStore.getState().setUI({ isLibraryExportPanelVisible: false });
   }, []);
 
-  const handleBackToLibrary = useCallback(() => {
+  const performBackToLibrary = useCallback(() => {
     const { selectedImage, resetHistory, setEditor } = useEditorStore.getState();
     const { setLibrary } = useLibraryStore.getState();
     const { setUI } = useUIStore.getState();
@@ -104,6 +104,32 @@ export function useAppNavigation({ clearThumbnailQueue, refs }: AppNavigationPro
       return { interactivePatch: null };
     });
   }, [refs]);
+
+  const handleBackToLibrary = useCallback(() => {
+    const { selectedImage, adjustments } = useEditorStore.getState();
+    const { rootPaths } = useLibraryStore.getState();
+    const { setUI } = useUIStore.getState();
+
+    const isSingleImageSession = !rootPaths || rootPaths.length === 0;
+    const hasUnsavedEdits =
+      isSingleImageSession && !!selectedImage && JSON.stringify(adjustments) !== JSON.stringify(INITIAL_ADJUSTMENTS);
+
+    if (hasUnsavedEdits) {
+      setUI({
+        confirmModalState: {
+          confirmText: 'Discard Edits',
+          confirmVariant: 'destructive',
+          isOpen: true,
+          message: 'You have unsaved edits on this image. Leaving now will discard them. Continue?',
+          onConfirm: performBackToLibrary,
+          title: 'Discard unsaved edits?',
+        },
+      });
+      return;
+    }
+
+    performBackToLibrary();
+  }, [performBackToLibrary]);
 
   const handleImageSelect = useCallback(
     async (path: string) => {
