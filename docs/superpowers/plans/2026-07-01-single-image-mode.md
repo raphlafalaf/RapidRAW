@@ -20,7 +20,7 @@
 
 The dialog file-type filter logic (raw/non-raw extension lists, uppercase+lowercase expansion) currently lives only in `handleImportClick` in `useFileOperations.ts`. We need the same logic for the new "Open Image" picker and for drag-drop filtering, so extract it once.
 
-- [ ] **Step 1: Create the shared util**
+- [x] **Step 1: Create the shared util**
 
 ```typescript
 // src/utils/fileUtils.ts
@@ -66,7 +66,7 @@ export function isSupportedImagePath(path: string, supportedTypes: SupportedType
 }
 ```
 
-- [ ] **Step 2: Refactor `handleImportClick` to use it**
+- [x] **Step 2: Refactor `handleImportClick` to use it**
 
 In `src/hooks/useFileOperations.ts`, add the import at the top (after the existing `Status` import on line 11):
 
@@ -86,7 +86,7 @@ Then replace the filter-building block (current lines 287-306, from `const nonRa
         });
 ```
 
-- [ ] **Step 3: Verify no behavior change**
+- [x] **Step 3: Verify no behavior change**
 
 Run: `npm run typecheck 2>&1 | grep -c "error TS"`
 Expected: `11` (same pre-existing baseline count as before this task; no new errors from `fileUtils.ts` or `useFileOperations.ts`).
@@ -94,7 +94,7 @@ Expected: `11` (same pre-existing baseline count as before this task; no new err
 Run: `npm run lint`
 Expected: no new errors reported for `src/utils/fileUtils.ts` or `src/hooks/useFileOperations.ts`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /home/raph/MyAppsZor/RapidRAW
@@ -109,7 +109,7 @@ git commit -m "refactor: extract shared image file-type filter util"
 **Files:**
 - Modify: `src/hooks/useAppNavigation.ts:437-483` (right after `handleOpenFolder`)
 
-- [ ] **Step 1: Add the import**
+- [x] **Step 1: Add the import**
 
 At the top of `src/hooks/useAppNavigation.ts`, add alongside the existing imports (after line 13, `import { globalImageCache } from '../utils/ImageLRUCache';`):
 
@@ -117,7 +117,7 @@ At the top of `src/hooks/useAppNavigation.ts`, add alongside the existing import
 import { buildImageTypeFilters } from '../utils/fileUtils';
 ```
 
-- [ ] **Step 2: Add `handleOpenImage`**
+- [x] **Step 2: Add `handleOpenImage`**
 
 Insert immediately after the closing `};` of `handleOpenFolder` (after line 483, before `const handleContinueSession = () => {`):
 
@@ -143,7 +143,7 @@ Insert immediately after the closing `};` of `handleOpenFolder` (after line 483,
   };
 ```
 
-- [ ] **Step 3: Export it from the hook**
+- [x] **Step 3: Export it from the hook**
 
 In the `return { ... }` block at the end of the file (lines 587-596), add `handleOpenImage` after `handleOpenFolder`:
 
@@ -160,12 +160,12 @@ In the `return { ... }` block at the end of the file (lines 587-596), add `handl
   };
 ```
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run: `npm run typecheck 2>&1 | grep -c "error TS"`
 Expected: `11` (unchanged baseline; `handleOpenImage` isn't wired to any caller yet so nothing else should break).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/raph/MyAppsZor/RapidRAW
@@ -183,7 +183,7 @@ git commit -m "feat: add handleOpenImage navigation handler"
 - Modify: `src/App.tsx`
 - Modify: `src/i18n/locales/en.json`, `de.json`, `es.json`, `fr.json`, `it.json`, `ja.json`, `ko.json`, `pl.json`, `pt.json`, `ru.json`, `zh-CN.json`, `zh-TW.json`
 
-- [ ] **Step 1: Add translation key to all 12 locales**
+- [x] **Step 1: Add translation key to all 12 locales**
 
 In each locale file's `splash` object, insert a new `openImage` key alphabetically between the existing `openFolder` and `openLibrary` keys:
 
@@ -249,12 +249,12 @@ In each locale file's `splash` object, insert a new `openImage` key alphabetical
 
 Each locale's `splash` block has the same key layout as `en.json` (`openFolder` then `openLibrary`) — insert the new line between them, keeping the trailing comma on `openFolder`'s line as in the existing file.
 
-- [ ] **Step 2: Verify i18n key is picked up**
+- [x] **Step 2: Verify i18n key is picked up**
 
 Run: `npm run i18n:check`
 Expected: no missing-key errors for `splash.openImage` (it now exists in all locale files used by the extractor).
 
-- [ ] **Step 3: Add `onOpenImage` prop and button to `MainLibrary.tsx`**
+- [x] **Step 3: Add `onOpenImage` prop and button to `MainLibrary.tsx`**
 
 Add `ImagePlus` to the `lucide-react` import (top of file, currently lines 3-16):
 
@@ -324,7 +324,7 @@ In the splash screen button row (currently lines 306-330, the `<div className="f
 
 (Only the new `{!props.isAndroid && (...)}` block is new; the surrounding two buttons are unchanged, shown here for placement context. Android is excluded because it already uses a SAF-based library picker as its only "open" flow, consistent with `isAndroid` being excluded from other file-dialog flows in this codebase.)
 
-- [ ] **Step 4: Thread `onOpenImage` through `LibraryView.tsx`**
+- [x] **Step 4: Thread `onOpenImage` through `LibraryView.tsx`**
 
 In `src/components/views/LibraryView.tsx`, add to `LibraryViewProps` (after line 32, `handleOpenFolder: (...args: any) => void;`):
 
@@ -347,7 +347,7 @@ Pass it to `MainLibrary` (after line 152, `onOpenFolder={handleOpenFolder}`):
             onOpenImage={handleOpenImage}
 ```
 
-- [ ] **Step 5: Wire it up in `App.tsx`**
+- [x] **Step 5: Wire it up in `App.tsx`**
 
 Destructure `handleOpenImage` from `useAppNavigation` (line 260-271, add to the destructured list alongside `handleOpenFolder`):
 
@@ -374,7 +374,7 @@ Pass it to `LibraryView` (after line 682, `handleOpenFolder={handleOpenFolder}`)
                   handleOpenImage={handleOpenImage}
 ```
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 Run: `npm run typecheck 2>&1 | grep -c "error TS"`
 Expected: `11` (unchanged baseline).
@@ -384,7 +384,7 @@ Expected: no new errors.
 
 Manual QA (run `npm run start` on your machine): launch the app with no folder previously opened. The blank welcome screen should show "Open Folder" and a new "Open Image" button. Click "Open Image", pick a single RAW or JPEG file. The editor should open directly on that image, with no folder tree on the left and no filmstrip at the bottom.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 cd /home/raph/MyAppsZor/RapidRAW
@@ -401,7 +401,7 @@ git commit -m "feat: add Open Image button to welcome screen"
 
 Uses Tauri's native window drag-drop event (real filesystem paths, not the HTML5 DataTransfer API), so it works the same whether or not the OS webview has focus-related quirks around HTML5 drag events.
 
-- [ ] **Step 1: Add imports**
+- [x] **Step 1: Add imports**
 
 In `src/App.tsx`, `getCurrentWindow` is already imported (line 4). Add the extension-check util import alongside the other util imports (after line 13, `import { useThumbnails } from './hooks/useThumbnails';`, is fine, or group with other utils imports near line 28):
 
@@ -409,7 +409,7 @@ In `src/App.tsx`, `getCurrentWindow` is already imported (line 4). Add the exten
 import { isSupportedImagePath } from './utils/fileUtils';
 ```
 
-- [ ] **Step 2: Add the drag-drop listener effect**
+- [x] **Step 2: Add the drag-drop listener effect**
 
 Add a new `useEffect` in `App.tsx`, near the other window-level effects (right after the fullscreen-tracking effect that ends around line 523, before `const handleRightPanelSelect = ...`):
 
@@ -439,7 +439,7 @@ Add a new `useEffect` in `App.tsx`, near the other window-level effects (right a
   }, [handleImageSelect]);
 ```
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 Run: `npm run typecheck 2>&1 | grep -c "error TS"`
 Expected: `11` (unchanged baseline).
@@ -449,7 +449,7 @@ Expected: no new errors.
 
 Manual QA (run `npm run start`): with the app on the blank welcome screen, drag a supported image file from your file manager onto the app window. It should open directly in the editor. Repeat while a folder library is already open and an unrelated image is being edited: dropping a new file should switch straight to editing the dropped file. Drop a file with an unsupported extension (e.g. a `.txt` file): nothing should happen, no crash, no toast.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /home/raph/MyAppsZor/RapidRAW
@@ -464,11 +464,11 @@ git commit -m "feat: support opening an image via drag-and-drop"
 **Files:**
 - Modify: `src/components/views/EditorView.tsx:179`
 
-- [ ] **Step 1: Confirm `rootPaths` is already available in this component**
+- [x] **Step 1: Confirm `rootPaths` is already available in this component**
 
 `rootPaths` is already destructured and used in `EditorView.tsx` (passed to `ExportPanel` at line 236). No new store subscription needed.
 
-- [ ] **Step 2: Change `showFilmstrip`**
+- [x] **Step 2: Change `showFilmstrip`**
 
 In `src/components/views/EditorView.tsx`, change line 179 from:
 
@@ -482,14 +482,14 @@ to:
       showFilmstrip={!isCompactPortrait && rootPaths.length > 0}
 ```
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 Run: `npm run typecheck 2>&1 | grep -c "error TS"`
 Expected: `11` (unchanged baseline).
 
 Manual QA (run `npm run start`): open a single image via the Open Image button (no folder open). Confirm the bottom filmstrip strip is not shown. Then go back, open a folder normally, select an image, and confirm the filmstrip still shows as before.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /home/raph/MyAppsZor/RapidRAW
@@ -506,7 +506,7 @@ git commit -m "fix: hide filmstrip in single image mode"
 
 Since images opened via Open Image / drag-and-drop have no sidecar autosave, leaving the editor (back button, Escape, etc.) while there are unsaved edits and no folder open would silently discard them. Gate that specific case with the existing `ConfirmModal` (already wired app-wide via `useUIStore.confirmModalState`, see `src/components/modals/AppModals.tsx:116-118`).
 
-- [ ] **Step 1: Rename the existing body to an inner function**
+- [x] **Step 1: Rename the existing body to an inner function**
 
 In `src/hooks/useAppNavigation.ts`, rename `handleBackToLibrary`'s implementation so it can be reused as the confirmed action. Replace the current declaration (lines 59-105):
 
@@ -638,7 +638,7 @@ with:
   }, [performBackToLibrary]);
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 Run: `npm run typecheck 2>&1 | grep -c "error TS"`
 Expected: `11` (unchanged baseline).
@@ -651,7 +651,7 @@ Manual QA (run `npm run start`):
 2. Open an image via Open Image, change any adjustment slider, then go back. Should show a "Discard unsaved edits?" confirmation. Cancel should keep you in the editor with the edit intact. Confirm should return to the welcome screen and discard the edit.
 3. Open a folder normally, select an image, make an edit, go back. Should return immediately with no confirmation (library mode has autosave, this gate only applies when no folder is open).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /home/raph/MyAppsZor/RapidRAW
@@ -665,17 +665,17 @@ git commit -m "feat: confirm before discarding unsaved edits in single image mod
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: Full typecheck diff check**
+- [x] **Step 1: Full typecheck diff check**
 
 Run: `npm run typecheck 2>&1 | grep "error TS" | wc -l`
 Expected: `11`, matching the documented pre-existing baseline at the top of this plan. If it's higher, find and fix the new error(s) before proceeding.
 
-- [ ] **Step 2: Full lint pass**
+- [x] **Step 2: Full lint pass**
 
 Run: `npm run lint`
 Expected: no errors introduced by this feature (pre-existing warnings/errors elsewhere in the repo, if any, are out of scope).
 
-- [ ] **Step 3: Production build**
+- [x] **Step 3: Production build**
 
 Run: `npm run build`
 Expected: build completes successfully (this also catches any Vite/Rollup-level issues typecheck alone might miss).
@@ -693,7 +693,7 @@ Run through, in order:
 8. Drag an unsupported file (e.g. `.txt`) onto the window: no-op, no crash.
 9. Open a folder normally afterward: confirm nothing above broke standard library browsing, filmstrip, folder tree, or context menus.
 
-- [ ] **Step 5: Push**
+- [x] **Step 5: Push**
 
 ```bash
 cd /home/raph/MyAppsZor/RapidRAW
