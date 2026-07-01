@@ -11,6 +11,7 @@ import { useSettingsStore } from '../store/useSettingsStore';
 import { Invokes, LibraryViewMode, ImageFile } from '../components/ui/AppProperties';
 import { INITIAL_ADJUSTMENTS, normalizeLoadedAdjustments } from '../utils/adjustments';
 import { globalImageCache } from '../utils/ImageLRUCache';
+import { buildImageTypeFilters } from '../utils/fileUtils';
 import { debouncedSave, debouncedSetHistory } from './useEditorActions';
 
 export interface AppNavigationProps {
@@ -482,6 +483,26 @@ export function useAppNavigation({ clearThumbnailQueue, refs }: AppNavigationPro
     }
   };
 
+  const handleOpenImage = async () => {
+    const { supportedTypes } = useSettingsStore.getState();
+
+    try {
+      const typeFilters = buildImageTypeFilters(supportedTypes);
+      const selected = await open({
+        filters: typeFilters,
+        multiple: false,
+        title: 'Select an image to open',
+      });
+
+      if (typeof selected === 'string') {
+        await handleImageSelect(selected);
+      }
+    } catch (err) {
+      console.error('Failed to open image selection dialog:', err);
+      toast.error('Failed to open image selection dialog.');
+    }
+  };
+
   const handleContinueSession = () => {
     const restore = async () => {
       const { appSettings } = useSettingsStore.getState();
@@ -591,6 +612,7 @@ export function useAppNavigation({ clearThumbnailQueue, refs }: AppNavigationPro
     handleSelectSubfolder,
     handleSelectAlbum,
     handleOpenFolder,
+    handleOpenImage,
     handleContinueSession,
   };
 }
