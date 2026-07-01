@@ -176,7 +176,7 @@ export default function EditorView({
       setIsFilmstripVisible={(value: boolean) =>
         setUI((state) => ({ uiVisibility: { ...state.uiVisibility, filmstrip: value } }))
       }
-      showFilmstrip={!isCompactPortrait}
+      showFilmstrip={!isCompactPortrait && rootPaths.length > 0}
       showZoomControls={!isAndroid}
       thumbnailAspectRatio={thumbnailAspectRatio}
       totalImages={sortedImageList.length}
