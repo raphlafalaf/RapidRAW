@@ -531,6 +531,25 @@ npm install
 npm start
 ```
 
+**3. Build a Local Installable Package (Linux)**
+
+To build a `.deb` you can install and launch from your app menu:
+
+```bash
+# 1. Clone and install dependencies (same as above)
+git clone https://github.com/CyberTimon/RapidRAW.git
+cd RapidRAW
+npm install
+
+# 2. Build the release package
+npm run tauri build
+
+# 3. Install it (Debian/Ubuntu-based distros)
+sudo apt install ./src-tauri/target/release/bundle/deb/RapidRAW_*.deb
+```
+
+This installs the binary, icons, and a `.desktop` entry, so RapidRAW shows up in your app launcher with the correct icon like any other installed app.
+
 ## System Requirements
 
 RapidRAW is built to be lightweight and cross-platform. The minimum (tested) requirements are:
